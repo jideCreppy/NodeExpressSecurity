@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import {routes} from './src/routes';
 import jsonwebtoken from 'jsonwebtoken';
+import helmet from "helmet";
+
 const app = express();
 const port = 3000;
 
@@ -17,6 +19,9 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb+srv://root:root@cluster0.ezyie.mongodb.net/crm?retryWrites=true&w=majority')
 .then( () => console.log('connected to mongoose'))
 .catch(err => console.log('Mongoose connection failed'));
+
+// Secure Header setup
+app.use(helmet());
 
 // JWT setup
 const tokenSecret = 'RESTFULLAPIs';
