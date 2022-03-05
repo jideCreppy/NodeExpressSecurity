@@ -10,14 +10,15 @@ export const userSchema = new Schema({
     },
     email : {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     hashPassword : {
         type: String,
         required: true
     },
     createdDate : {
-        type: String,
+        type: Date,
         default: Date.now()
     }
 });

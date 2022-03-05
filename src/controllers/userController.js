@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt  from 'jsonwebtoken';
 import {userSchema} from '../models/userModel';
+import {validationResult} from 'express-validator';
+
 
 const User = mongoose.model('User', userSchema);
 const tokenSecret = 'RESTFULLAPIs';
@@ -17,6 +19,12 @@ export const loginRequired = (req, res, next) => {
 }
 
 export const register = async (req, res) => {
+    const validationErrors = validationResult(req);
+
+    if(!validationErrors.isEmpty()) {
+        return res.status(400).json({ errors : validationErrors.array() })
+    }
+
     const newUser = new User(req.body);
     newUser.hashPassword = bcrypt.hashSync(req.body.password, 10);
     try{
@@ -24,11 +32,17 @@ export const register = async (req, res) => {
         user.hashPassword = undefined; // Never return back the password in response
         return res.json(user);
     } catch(err) {
-        return res.status(400).send({ message: err });
+        return res.status(400).send({ message: `An error occured ${err}` });
     }
 }
 
 export const login = async (req, res) => {
+
+    const validationErrors = validationResult(req);
+
+    if(!validationErrors.isEmpty()) {
+        return res.status(400).json({ errors : validationErrors.array() })
+    }
 
     try{
         let user = await  User.findOne({ email: req.body.email });

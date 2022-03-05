@@ -9,9 +9,11 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); 
 
 // Mogoose connection
+mongoose.Promise = global.Promise;
+
 mongoose.connect('mongodb+srv://root:root@cluster0.ezyie.mongodb.net/crm?retryWrites=true&w=majority')
 .then( () => console.log('connected to mongoose'))
 .catch(err => console.log('Mongoose connection failed'));
