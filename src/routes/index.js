@@ -12,10 +12,3 @@ export const routes = () => {
 
     return router;
 }
-
-// export const routes = () => {
-    
-//     router.get('/contacts', loginRequired, dummyRoute);
-
-//     return router;
-// }

@@ -22,25 +22,26 @@ export const register = async (req, res) => {
         user.hashPassword = undefined; // Never return back the password in response
         return res.json(user);
     } catch(err) {
-        return res.status(400).send({message: err});
+        return res.status(400).send({ message: err });
     }
 }
 
-export const login = (req, res) => {
-    User.findOne({
-        email: req.body.email
-    }, (err, user) => {
-        if (err) throw err;
+export const login = async (req, res) => {
+
+    try{
+        let user = await  User.findOne({ email: req.body.email });
         if (!user) {
-            res.status(401).json({message: 'User unauthorized. No user found'});
+            res.status(401).json({ message: 'User unauthorized. No user found' });
         } else if (user) {
-            if(!user.comparePassword(req.body.password, user.hashPassword)) {
-                res.status(401).json({message: 'Auth failed. Invalid password'});
+            if (!user.comparePassword(req.body.password, user.hashPassword)) {
+                res.status(401).json({ message: 'Auth failed. Invalid password' });
             } else {
                 return res.json({token: jwt.sign({ email: user.email, username: user.username, _id: user.id}, tokenSecret)});
             }
         }
-    });
+    } catch (err) {
+        throw err;
+    }
 }
 
 export const dummyRoute = (req,res,next) => {
