@@ -10,13 +10,6 @@ import rateLimit from 'express-rate-limit';
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Secure Header setup
-app.use(helmet());
-
 // API rate limit
 const limiter = rateLimit({
     windowMs: 15*60*1000, // 15 minutes,
@@ -24,16 +17,22 @@ const limiter = rateLimit({
     delayMs: 0 // disables delays
 });
 
-// Apply the rate limiting middleware to all requests
-app.use(limiter)
-
-
 // Mogoose connection
 mongoose.Promise = global.Promise;
 
 mongoose.connect('mongodb+srv://root:root@cluster0.ezyie.mongodb.net/crm?retryWrites=true&w=majority')
 .then( () => console.log('connected to mongoose'))
 .catch(err => console.log('Mongoose connection failed'));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Secure Header setup
+app.use(helmet());
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter)
 
 // JWT setup
 const tokenSecret = 'RESTFULLAPIs';
