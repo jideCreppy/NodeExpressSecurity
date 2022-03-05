@@ -5,13 +5,28 @@ import path from 'path';
 import {routes} from './src/routes';
 import jsonwebtoken from 'jsonwebtoken';
 import helmet from "helmet";
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'public'))); 
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Secure Header setup
+app.use(helmet());
+
+// API rate limit
+const limiter = rateLimit({
+    windowMs: 15*60*1000, // 15 minutes,
+    max: 10, // limit of number of request per IP
+    delayMs: 0 // disables delays
+});
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter)
+
 
 // Mogoose connection
 mongoose.Promise = global.Promise;
@@ -19,9 +34,6 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb+srv://root:root@cluster0.ezyie.mongodb.net/crm?retryWrites=true&w=majority')
 .then( () => console.log('connected to mongoose'))
 .catch(err => console.log('Mongoose connection failed'));
-
-// Secure Header setup
-app.use(helmet());
 
 // JWT setup
 const tokenSecret = 'RESTFULLAPIs';
