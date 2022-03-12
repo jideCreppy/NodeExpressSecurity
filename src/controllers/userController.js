@@ -6,6 +6,8 @@ import jwt  from 'jsonwebtoken';
 import {userSchema} from '../models/userModel';
 import {validationResult} from 'express-validator';
 
+// TODO add csurf csrf protection
+// TODO update api to use secure cookie
 
 const User = mongoose.model('User', userSchema);
 const tokenSecret = 'RESTFULLAPIs';

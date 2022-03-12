@@ -6,6 +6,7 @@ import {routes} from './src/routes';
 import jsonwebtoken from 'jsonwebtoken';
 import helmet from "helmet";
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 3000;
@@ -28,11 +29,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Apply the rate limiting middleware to all requests
+app.use(limiter)
+
 // Secure Header setup
 app.use(helmet());
 
-// Apply the rate limiting middleware to all requests
-app.use(limiter)
+// Cookie required for csrf protection
+app.use(cookieParser());
 
 // JWT setup
 const tokenSecret = 'RESTFULLAPIs';
